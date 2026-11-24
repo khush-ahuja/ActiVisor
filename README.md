@@ -57,4 +57,4 @@ Change Alert Settings: Modify the config/settings.json file to customize the vis
 Model Training: If you'd like to train the system on custom actions, follow the instructions in the TRAIN.md file.
 
 Contributing
-We welcome contributions! If you have suggestions or improvements, feel free to fork the project and submit a pull request. Please see the CONTRIBUTING.md for more details.
+We welcome contributions! If you have suggestions or improvements, feel free to fork the project and open a pull request.
