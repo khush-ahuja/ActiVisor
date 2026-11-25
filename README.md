@@ -1,60 +1,36 @@
 # ActiVisor
- A real-time action recognition system for deaf people, translating movements and gestures into visual cues using computer vision to enhance communication and accessibility.
-ActiVisor
-Real-Time Human Action Recognition System for the Deaf
 
-ActiVisor is a cutting-edge real-time human action recognition system designed specifically for the deaf and hard-of-hearing community. By using advanced computer vision techniques, ActiVisor detects and interprets human actions (such as gestures, body movements, and other non-verbal signals) and converts them into visual cues or alerts. This system provides an intuitive and accessible way for deaf individuals to interact and communicate in both social and professional settings.
+Real-time sign recognition from a webcam: MediaPipe Holistic tracks the body, face and hands, and an LSTM classifies short sequences of keypoints into signs, shown as on-screen text for deaf and hard-of-hearing users.
 
-Features
-Real-time Action Detection: Detects and classifies human actions like gestures, walking, and other movements.
+## How it works
 
-Accessibility Focused: Translates actions into visual cues for the deaf and hard-of-hearing users.
+```
+webcam frame ─► MediaPipe Holistic ─► 1,662 keypoints per frame (pose, face, both hands)
+                                              │
+                         last 30 frames ──────┘
+                                              ▼
+                     LSTM(64) ─► LSTM(128) ─► LSTM(64) ─► Dense ─► softmax over 10 signs
+```
 
-Customizable Alerts: Users can customize how they receive alerts or notifications.
+- **Signs:** hello, thanks, father, mother, yes, no, help, A, B, C
+- **Data:** 30 recorded sequences per sign, 30 frames each, stored as NumPy keypoint arrays
+- **Model:** 3-layer LSTM in TensorFlow/Keras, trained with categorical cross-entropy
+- **Real time:** a rolling 30-frame window is classified every frame; a prediction is shown only above 0.8 confidence
+- **App:** a Flask app streams the annotated webcam feed with the recognised signs
 
-Multi-Purpose Application: Ideal for use in education, social interactions, workplace settings, and more.
+## Files
 
-Technologies Used
-Computer Vision: Using advanced computer vision techniques to detect human actions in real time.
+| File | What it does |
+|---|---|
+| `Action Detection .ipynb` | keypoint extraction, data collection, training |
+| `Real_Time Testing.ipynb` | live webcam inference |
+| `app.py.ipynb`, `camera.py.ipynb` | Flask streaming app |
+| `action.h5`, `action.keras` | trained model weights |
 
-Deep Learning: Employs deep learning models to accurately identify and classify gestures and actions.
+## Status
 
-OpenCV: For processing images and video feeds in real-time.
+Early prototype trained on a small self-recorded dataset, so it works best for the recording signer and setting. Next steps: more signers and samples per sign, a held-out signer for testing, and a hand-only feature set to cut the 1,662-value input.
 
-TensorFlow/Keras: For building and training deep learning models.
+## Tech
 
-Installation
-Clone the repository:
-
-bash
-Copy
-Edit
-
-Navigate to the project directory:
-
-bash
-Copy
-Edit
-cd ActiVisor
-Install required dependencies:
-
-bash
-Copy
-Edit
-pip install -r requirements.txt
-Usage
-Run the main application:
-
-bash
-Copy
-Edit
-python actiVisor.py
-The application will start detecting actions and displaying visual cues based on detected movements.
-
-Customization
-Change Alert Settings: Modify the config/settings.json file to customize the visual cues and alerts.
-
-Model Training: If you'd like to train the system on custom actions, follow the instructions in the TRAIN.md file.
-
-Contributing
-We welcome contributions! If you have suggestions or improvements, feel free to fork the project and open a pull request.
+Python · OpenCV · MediaPipe · TensorFlow/Keras · scikit-learn · Flask
